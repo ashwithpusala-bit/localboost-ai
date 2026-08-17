@@ -1,31 +1,46 @@
 const express = require("express");
 const path = require("path");
-const OpenAI = require("openai");
 
 const app = express();
 
 app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.post("/generate", async (req, res) => {
+app.post("/generate", (req, res) => {
   try {
     const { prompt } = req.body;
 
-    const response = await client.responses.create({
-      model: "gpt-5-mini",
-      input: prompt
-    });
-
     res.json({
       success: true,
-      result: response.output_text
+      result: `🚀 LocalBoost AI – Demo Marketing Plan
+
+Instagram Caption:
+🔥 Boost your business with ${prompt}
+
+Facebook Post:
+Looking for quality local products and great offers? Visit us today and discover something special!
+
+Advertisement Headline:
+⭐ Your Local Business, Your Best Choice!
+
+Special Offer Idea:
+🎁 Create a limited-time offer for local customers and promote it on Instagram and Facebook.
+
+5 Social Media Content Ideas:
+1. Product showcase
+2. Customer testimonial
+3. Behind-the-scenes video
+4. Special offer/reel
+5. Local customer appreciation post
+
+Hashtags:
+#LocalBusiness #LocalBoost #SmallBusiness #Marketing #InstagramMarketing #YourCity
+
+⚡ DEMO MODE:
+This is a free LocalBoost demonstration. Real AI generation can be connected later.`
     });
 
   } catch (error) {
@@ -33,7 +48,7 @@ app.post("/generate", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      error: "AI generation failed"
+      error: "Demo generation failed"
     });
   }
 });
