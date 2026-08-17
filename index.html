@@ -132,7 +132,18 @@
         id="goal"
         placeholder="Example: Get more customers from Instagram"
       ></textarea>
+<label>Business Photo</label>
+<input
+  type="file"
+  id="businessPhoto"
+  accept="image/*"
+  onchange="previewPhoto()"
+>
 
+<img
+  id="photoPreview"
+  style="display:none; width:100%; margin-top:15px; border-radius:10px;"
+>
       <button id="generateBtn" onclick="generateMarketing()">
         Generate Marketing Plan
       </button>
