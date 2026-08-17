@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LocalBoost AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 15px;
+      border: 0;
+      border-radius: 9px;
+      background: #111827;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    #result {
+      display: none;
+      margin-top: 25px;
+      padding: 20px;
+      background: #f3f4f6;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="card">
+
+      <h1>🚀 LocalBoost AI</h1>
+
+      <p class="subtitle">
+        AI Marketing Assistant for Local Businesses
+      </p>
+
+      <label>Business Name</label>
+      <input
+        id="businessName"
+        placeholder="Example: Sri Lakshmi Bakery"
+      >
+
+      <label>Business Type</label>
+      <input
+        id="businessType"
+        placeholder="Example: Bakery"
+      >
+
+      <label>Location</label>
+      <input
+        id="location"
+        placeholder="Example: Mancherial"
+      >
+
+      <label>Offer / Product</label>
+      <textarea
+        id="offer"
+        placeholder="Example: 20% discount on birthday cakes"
+      ></textarea>
+
+      <label>Marketing Goal</label>
+      <textarea
+        id="goal"
+        placeholder="Example: Get more customers from Instagram"
+      ></textarea>
+
+      <button id="generateBtn" onclick="generateMarketing()">
+        Generate Marketing Plan
+      </button>
+
+      <div id="result"></div>
+
+    </div>
+  </div>
+
+  <script>
+    async function generateMarketing() {
+
+      const button = document.getElementById("generateBtn");
+      const result = document.getElementById("result");
+
+      const businessName =
+        document.getElementById("businessName").value.trim();
+
+      const businessType =
+        document.getElementById("businessType").value.trim();
+
+      const location =
+        document.getElementById("location").value.trim();
+
+      const offer =
+        document.getElementById("offer").value.trim();
+
+      const goal =
+        document.getElementById("goal").value.trim();
+
+      if (!businessName || !businessType || !location) {
+        alert("Please enter Business Name, Business Type and Location.");
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Generating...";
+
+      result.style.display = "block";
+      result.textContent = "Creating your AI marketing plan...";
+
+      const prompt = `
+Create a marketing plan for this local business.
+
+Business Name: ${businessName}
+Business Type: ${businessType}
+Location: ${location}
+Offer/Product: ${offer}
+Marketing Goal: ${goal}
+
+Provide:
+
+1. Instagram caption
+2. Facebook post
+3. Advertisement headline
+4. Special offer idea
+5. 5 social media content ideas
+6. Hashtags
+
+Make the content attractive and useful for a local business.
+`;
+
+      try {
+
+        const response = await fetch("/generate", {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            prompt: prompt
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          result.textContent = data.result;
+        } else {
+          result.textContent =
+            "AI Error: " + (data.error || "Unknown error");
+        }
+
+      } catch (error) {
+
+        result.textContent =
+          "Could not connect to LocalBoost AI server.";
+
+      }
+
+      button.disabled = false;
+      button.textContent = "Generate Marketing Plan";
+    }
+  </script>
+
+</body>
+</html>
