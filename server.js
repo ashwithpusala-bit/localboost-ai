@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const OpenAI = require("openai");
 
 const app = express();
@@ -10,7 +11,7 @@ const client = new OpenAI({
 });
 
 app.get("/", (req, res) => {
-  res.send("LocalBoost AI is running!");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.post("/generate", async (req, res) => {
@@ -26,6 +27,7 @@ app.post("/generate", async (req, res) => {
       success: true,
       result: response.output_text
     });
+
   } catch (error) {
     console.error(error);
 
