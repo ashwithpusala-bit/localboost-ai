@@ -20,13 +20,13 @@
 
     .container {
       max-width: 700px;
-      margin: 40px auto;
-      padding: 25px;
+      margin: 30px auto;
+      padding: 20px;
     }
 
     .card {
       background: white;
-      padding: 30px;
+      padding: 28px;
       border-radius: 18px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     }
@@ -39,7 +39,7 @@
     .subtitle {
       text-align: center;
       color: #6b7280;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
     }
 
     label {
@@ -50,12 +50,14 @@
     }
 
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
       padding: 13px;
       border: 1px solid #d1d5db;
       border-radius: 9px;
       font-size: 16px;
+      font-family: Arial, sans-serif;
     }
 
     textarea {
@@ -63,9 +65,13 @@
       resize: vertical;
     }
 
+    input[type="file"] {
+      background: #f9fafb;
+    }
+
     button {
       width: 100%;
-      margin-top: 25px;
+      margin-top: 22px;
       padding: 15px;
       border: 0;
       border-radius: 9px;
@@ -78,16 +84,46 @@
 
     button:disabled {
       opacity: 0.6;
+      cursor: not-allowed;
     }
 
-    #result {
+    .secondary-button {
+      background: #374151;
+    }
+
+    #photoPreview {
+      display: none;
+      width: 100%;
+      max-height: 350px;
+      object-fit: cover;
+      margin-top: 15px;
+      border-radius: 12px;
+    }
+
+    #result,
+    #videoResult {
       display: none;
       margin-top: 25px;
       padding: 20px;
       background: #f3f4f6;
-      border-radius: 10px;
+      border-radius: 12px;
       white-space: pre-wrap;
       line-height: 1.6;
+    }
+
+    .section-title {
+      margin-top: 30px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .demo-note {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 9px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -95,6 +131,7 @@
 <body>
 
   <div class="container">
+
     <div class="card">
 
       <h1>🚀 LocalBoost AI</h1>
@@ -103,21 +140,26 @@
         AI Marketing Assistant for Local Businesses
       </p>
 
+      <h3 class="section-title">🏪 Business Details</h3>
+
       <label>Business Name</label>
       <input
         id="businessName"
+        type="text"
         placeholder="Example: Sri Lakshmi Bakery"
       >
 
       <label>Business Type</label>
       <input
         id="businessType"
+        type="text"
         placeholder="Example: Bakery"
       >
 
       <label>Location</label>
       <input
         id="location"
+        type="text"
         placeholder="Example: Mancherial"
       >
 
@@ -132,32 +174,99 @@
         id="goal"
         placeholder="Example: Get more customers from Instagram"
       ></textarea>
-<label>Business Photo</label>
-<input
-  type="file"
-  id="businessPhoto"
-  accept="image/*"
-  onchange="previewPhoto()"
->
 
-<img
-  id="photoPreview"
-  style="display:none; width:100%; margin-top:15px; border-radius:10px;"
->
-      <button id="generateBtn" onclick="generateMarketing()">
+      <label>Business Photo</label>
+      <input
+        id="businessPhoto"
+        type="file"
+        accept="image/*"
+        onchange="previewPhoto()"
+      >
+
+      <img
+        id="photoPreview"
+        alt="Business Photo Preview"
+      >
+
+      <button
+        id="generateBtn"
+        onclick="generateMarketing()"
+      >
         Generate Marketing Plan
       </button>
 
       <div id="result"></div>
 
+
+      <h3 class="section-title">🎬 Video Marketing</h3>
+
+      <label>Video Style</label>
+      <select id="videoStyle">
+        <option value="Instagram Reel">Instagram Reel</option>
+        <option value="Facebook Video">Facebook Video</option>
+        <option value="Advertisement">Advertisement</option>
+        <option value="YouTube Short">YouTube Short</option>
+      </select>
+
+      <label>Video Duration</label>
+      <select id="videoDuration">
+        <option value="15 seconds">15 seconds</option>
+        <option value="30 seconds">30 seconds</option>
+        <option value="60 seconds">60 seconds</option>
+      </select>
+
+      <button
+        class="secondary-button"
+        onclick="generateVideoPrompt()"
+      >
+        🎬 Generate Video Script
+      </button>
+
+      <div id="videoResult"></div>
+
+      <div class="demo-note">
+        ⚡ Free Demo Mode: Marketing plan and video script are generated
+        without paid AI API usage. Actual AI video/MP4 generation can be
+        connected later.
+      </div>
+
     </div>
+
   </div>
 
+
   <script>
+
+    function previewPhoto() {
+
+      const file =
+        document.getElementById("businessPhoto").files[0];
+
+      const preview =
+        document.getElementById("photoPreview");
+
+      if (file) {
+
+        preview.src = URL.createObjectURL(file);
+
+        preview.style.display = "block";
+
+      } else {
+
+        preview.src = "";
+
+        preview.style.display = "none";
+      }
+    }
+
+
     async function generateMarketing() {
 
-      const button = document.getElementById("generateBtn");
-      const result = document.getElementById("result");
+      const button =
+        document.getElementById("generateBtn");
+
+      const result =
+        document.getElementById("result");
 
       const businessName =
         document.getElementById("businessName").value.trim();
@@ -174,41 +283,31 @@
       const goal =
         document.getElementById("goal").value.trim();
 
+
       if (!businessName || !businessType || !location) {
-        alert("Please enter Business Name, Business Type and Location.");
+
+        alert(
+          "Please enter Business Name, Business Type and Location."
+        );
+
         return;
       }
 
+
       button.disabled = true;
+
       button.textContent = "Generating...";
 
       result.style.display = "block";
-      result.textContent = "Creating your AI marketing plan...";
 
-      const prompt = `
-Create a marketing plan for this local business.
+      result.textContent =
+        "Creating your LocalBoost marketing plan...";
 
-Business Name: ${businessName}
-Business Type: ${businessType}
-Location: ${location}
-Offer/Product: ${offer}
-Marketing Goal: ${goal}
-
-Provide:
-
-1. Instagram caption
-2. Facebook post
-3. Advertisement headline
-4. Special offer idea
-5. 5 social media content ideas
-6. Hashtags
-
-Make the content attractive and useful for a local business.
-`;
 
       try {
 
         const response = await fetch("/generate", {
+
           method: "POST",
 
           headers: {
@@ -216,29 +315,186 @@ Make the content attractive and useful for a local business.
           },
 
           body: JSON.stringify({
-            prompt: prompt
+
+            businessName: businessName,
+            businessType: businessType,
+            location: location,
+            offer: offer,
+            goal: goal
+
           })
+
         });
+
 
         const data = await response.json();
 
+
         if (data.success) {
+
           result.textContent = data.result;
+
         } else {
+
           result.textContent =
-            "AI Error: " + (data.error || "Unknown error");
+            "Error: " +
+            (data.error || "Unknown error");
+
         }
 
+
       } catch (error) {
+
+        console.error(error);
 
         result.textContent =
           "Could not connect to LocalBoost AI server.";
 
       }
 
+
       button.disabled = false;
-      button.textContent = "Generate Marketing Plan";
+
+      button.textContent =
+        "Generate Marketing Plan";
     }
+
+
+    function generateVideoPrompt() {
+
+      const businessName =
+        document.getElementById("businessName").value.trim();
+
+      const businessType =
+        document.getElementById("businessType").value.trim();
+
+      const location =
+        document.getElementById("location").value.trim();
+
+      const offer =
+        document.getElementById("offer").value.trim();
+
+      const goal =
+        document.getElementById("goal").value.trim();
+
+      const videoStyle =
+        document.getElementById("videoStyle").value;
+
+      const videoDuration =
+        document.getElementById("videoDuration").value;
+
+      const videoResult =
+        document.getElementById("videoResult");
+
+
+      if (!businessName || !businessType || !location) {
+
+        alert(
+          "Please enter Business Name, Business Type and Location first."
+        );
+
+        return;
+      }
+
+
+      const finalOffer =
+        offer || "a special offer";
+
+      const finalGoal =
+        goal || "get more local customers";
+
+
+      const script = `🎬 LOCALBOOST AI – VIDEO SCRIPT
+
+Business:
+${businessName}
+
+Type:
+${businessType}
+
+Location:
+${location}
+
+Style:
+${videoStyle}
+
+Duration:
+${videoDuration}
+
+
+━━━━━━━━━━━━━━━━━━━━━━
+🎥 SCENE 1 – ATTENTION
+━━━━━━━━━━━━━━━━━━━━━━
+
+Show an attractive view of ${businessName}.
+
+On-screen text:
+"Looking for a great ${businessType} in ${location}?"
+
+
+━━━━━━━━━━━━━━━━━━━━━━
+🎥 SCENE 2 – BUSINESS
+━━━━━━━━━━━━━━━━━━━━━━
+
+Show the products/services of ${businessName}.
+
+Voice-over:
+"Discover ${businessName}, your local choice in ${location}."
+
+
+━━━━━━━━━━━━━━━━━━━━━━
+🎥 SCENE 3 – OFFER
+━━━━━━━━━━━━━━━━━━━━━━
+
+Highlight the special offer.
+
+On-screen text:
+"${finalOffer}"
+
+
+━━━━━━━━━━━━━━━━━━━━━━
+🎥 SCENE 4 – CALL TO ACTION
+━━━━━━━━━━━━━━━━━━━━━━
+
+Show the business location and contact information.
+
+Voice-over:
+"Visit ${businessName} today and don't miss this special offer!"
+
+Goal:
+${finalGoal}
+
+
+━━━━━━━━━━━━━━━━━━━━━━
+📱 SOCIAL MEDIA CAPTION
+━━━━━━━━━━━━━━━━━━━━━━
+
+🔥 ${businessName} – ${location}!
+
+${finalOffer}
+
+Visit us today and discover something special! ❤️
+
+#LocalBusiness
+#${location.replace(/\s+/g, "")}
+#${businessType.replace(/\s+/g, "")}
+#LocalBoost
+#SmallBusiness
+#Marketing
+
+
+⚡ DEMO MODE
+
+This creates the video script/prompt.
+Actual AI video generation and MP4 export can be connected later.
+`;
+
+
+      videoResult.style.display = "block";
+
+      videoResult.textContent = script;
+    }
+
   </script>
 
 </body>
